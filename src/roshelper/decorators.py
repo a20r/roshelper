@@ -9,6 +9,7 @@ class Node(object):
         self.kwargs = kwargs
         self.is_main = pyname == "__main__"
         self.parents = dict()
+        self.m_loop = None
 
     def subscriber(self, topic_name, msg_type, **kwargs):
         def __decorator(func):
@@ -42,11 +43,14 @@ class Node(object):
                 nd = cl(*ar, **kw)
                 for v in dir(cl):
                     self.parents[v] = nd
-                while not rospy.is_shutdown():
-                    slf = self.parents[self.m_loop.func_name]
-                    args = [slf] + self.m_loop_args
-                    self.m_loop(*args, **self.m_loop_kwargs)
-                    rate.sleep()
+                if not self.m_loop is None:
+                    while not rospy.is_shutdown():
+                        slf = self.parents[self.m_loop.func_name]
+                        args = [slf] + self.m_loop_args
+                        self.m_loop(*args, **self.m_loop_kwargs)
+                        rate.sleep()
+                else:
+                    rospy.spin()
             return cl
         return __inner
 
