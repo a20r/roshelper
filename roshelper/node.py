@@ -2,6 +2,20 @@
 import rospy
 
 
+class MultiPublisherHelper(object):
+    def __init__(self, msg, msg_type, topics, **kwargs):
+        self.msg = msg
+        self.msg_type = msg_type
+        self.topics = topics
+        self.kwargs = kwargs
+
+    def publish(self, topic):
+        if not topic in self.topics:
+            args = [topic, self.msg_type]
+            self.topics[topic] = rospy.Publisher(*args, **self.kwargs)
+        self.topics[topic].publish(self.msg)
+
+
 class Node(object):
 
     def __init__(self, node_name, pyname, **kwargs):
@@ -32,23 +46,14 @@ class Node(object):
         return __decorator
 
     def multi_publisher(self, msg_type, **kwargs):
+        kw = kwargs
+
         def __decorator(func):
             topics = dict()
 
-            class __publisher(object):
-                def __init__(self, msg, topics):
-                    self.msg = msg
-                    self.topics = topics
-
-                def publish(self, topic):
-                    if not topic in self.topics:
-                        self.topics[topic] = rospy.Publisher(topic, msg_type,
-                                                             **kwargs)
-                    self.topics[topic].publish(self.msg)
-
             def __inner(*args, **kwargs):
                 msg = func(*args, **kwargs)
-                return __publisher(msg, topics)
+                return MultiPublisherHelper(msg, msg_type, topics, **kw)
 
             return __inner
         return __decorator
