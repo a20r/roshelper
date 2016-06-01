@@ -33,8 +33,6 @@ class Node(object):
 
     def multi_publisher(self, msg_type, **kwargs):
         def __decorator(func):
-            # args = [topic_name, msg_type]
-            # pub = rospy.Publisher(*args, **kwargs)
             topics = dict()
 
             class __publisher(object):
