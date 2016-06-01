@@ -1,9 +1,4 @@
 
-import os
-import sys
-
-sys.path.append(os.path.join(os.path.dirname(__file__), ".."))
-
 import roshelper
 import rospy
 from std_msgs.msg import String
