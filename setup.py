@@ -1,10 +1,10 @@
 
 from distutils.core import setup
-from catkin_pkg.python_setup import generate_distutils_setup
 
-# fetch values from package.xml
-setup_args = generate_distutils_setup(
-    packages=['roshelper'],
-    package_dir={'': ''},)
-
-setup(**setup_args)
+setup(name='roshelper',
+      version='1.0',
+      description='Making rospy just a bit easier',
+      author='Alex Wallar',
+      author_email='wallar@mit.edu',
+      url='http://github.com/wallarelvo/roshelper',
+      packages=['roshelper'],)
