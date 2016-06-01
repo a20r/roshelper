@@ -1,5 +1,6 @@
 
 import rospy
+import types
 
 
 class MultiPublisherHelper(object):
@@ -61,26 +62,44 @@ class Node(object):
             return __inner
         return __decorator
 
+    def start_class(self, cl, *ar, **kw):
+        rospy.init_node(self.node_name, **self.kwargs)
+        freq = rospy.get_param("frequency", 3)
+        rate = rospy.Rate(freq)
+        nd = cl(*ar, **kw)
+        for v in dir(cl):
+            self.parents[v] = nd
+        if not self.m_loop is None:
+            while not rospy.is_shutdown():
+                slf = self.parents[self.m_loop.func_name]
+                args = [slf] + self.m_loop_args
+                self.m_loop(*args, **self.m_loop_kwargs)
+                rate.sleep()
+        else:
+            rospy.spin()
+        return cl
+
+    def start_func(self, cl, *ar, **kw):
+        rospy.init_node(self.node_name, **self.kwargs)
+        freq = rospy.get_param("frequency", 3)
+        rate = rospy.Rate(freq)
+        while not rospy.is_shutdown():
+            cl(*ar, **kw)
+            rate.sleep()
+        return cl
+
     def start_node(self, *args, **kwargs):
         ar = args
         kw = kwargs
 
         def __inner(cl):
-            rospy.init_node(self.node_name, **self.kwargs)
             if self.is_main:
-                freq = rospy.get_param("frequency", 3)
-                rate = rospy.Rate(freq)
-                nd = cl(*ar, **kw)
-                for v in dir(cl):
-                    self.parents[v] = nd
-                if not self.m_loop is None:
-                    while not rospy.is_shutdown():
-                        slf = self.parents[self.m_loop.func_name]
-                        args = [slf] + self.m_loop_args
-                        self.m_loop(*args, **self.m_loop_kwargs)
-                        rate.sleep()
-                else:
-                    rospy.spin()
+                is_func = isinstance(cl, types.FunctionType)
+                is_class = isinstance(cl, types.TypeType)
+                if is_class:
+                    self.start_class(cl, *ar, **kw)
+                elif is_func:
+                    self.start_func(*ar, **kw)
             return cl
         return __inner
 
