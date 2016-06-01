@@ -33,15 +33,12 @@ class TestNode(object):
         rospy.loginfo("Sub --> {}".format(word))
 
     @n.subscriber("/test_node_int", Int64, queue_size=1)
-    def int_sub(self, num):
-        rospy.loginfo("Int Sub --> {}".format(num))
-
     @n.subscriber("/another_test_node_int", Int64, queue_size=1)
     def int_sub(self, num):
-        rospy.loginfo("Another Int Sub --> {}".format(num))
+        rospy.loginfo("Int Sub --> {}".format(num))
 
     @n.main_loop()
     def run(self):
         self.str_pub(self.word)
         self.int_pub(3).publish("/test_node_int")
-        self.int_pub(3).publish("/another_test_node_int")
+        self.int_pub(10).publish("/another_test_node_int")

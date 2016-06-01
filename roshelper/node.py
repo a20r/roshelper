@@ -28,7 +28,10 @@ class Node(object):
     def subscriber(self, topic_name, msg_type, **kwargs):
         def __decorator(func):
             def __inner(msg):
-                func(self.parents[func.func_name], msg)
+                if "self" in func.func_code.co_varnames:
+                    func(self.parents[func.func_name], msg)
+                else:
+                    func(msg)
             args = [topic_name, msg_type, __inner]
             rospy.Subscriber(*args, **kwargs)
             return func
