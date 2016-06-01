@@ -47,9 +47,9 @@ class Node(object):
 
     def multi_publisher(self, msg_type, **kwargs):
         kw = kwargs
+        topics = dict()
 
         def __decorator(func):
-            topics = dict()
 
             def __inner(*args, **kwargs):
                 msg = func(*args, **kwargs)
