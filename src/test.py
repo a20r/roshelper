@@ -8,7 +8,7 @@ from std_msgs.msg import String
 n = roshelper.Node("test_node", __name__, anonymous=False)
 
 
-@n.start_node("balls")
+@n.start_node(word="balls")
 class TestNode(object):
 
     def __init__(self, word):
