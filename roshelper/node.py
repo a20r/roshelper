@@ -31,6 +31,30 @@ class Node(object):
             return __inner
         return __decorator
 
+    def multi_publisher(self, msg_type, **kwargs):
+        def __decorator(func):
+            # args = [topic_name, msg_type]
+            # pub = rospy.Publisher(*args, **kwargs)
+            topics = dict()
+
+            class __publisher(object):
+                def __init__(self, msg, topics):
+                    self.msg = msg
+                    self.topics = topics
+
+                def publish(self, topic):
+                    if not topic in self.topics:
+                        self.topics[topic] = rospy.Publisher(topic, msg_type,
+                                                             **kwargs)
+                    self.topics[topic].publish(self.msg)
+
+            def __inner(*args, **kwargs):
+                msg = func(*args, **kwargs)
+                return __publisher(msg, topics)
+
+            return __inner
+        return __decorator
+
     def start_node(self, *args, **kwargs):
         ar = args
         kw = kwargs

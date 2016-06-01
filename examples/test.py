@@ -2,6 +2,7 @@
 import roshelper
 import rospy
 from std_msgs.msg import String
+from std_msgs.msg import Int64
 
 
 n = roshelper.Node("test_node", __name__, anonymous=False)
@@ -20,10 +21,27 @@ class TestNode(object):
         st.data = word[::-1]
         return st
 
+    @n.multi_publisher(Int64, queue_size=1)
+    def int_pub(self, num):
+        rospy.loginfo("Int Pub --> {}".format(num))
+        msg = Int64()
+        msg.data = num
+        return msg
+
     @n.subscriber("/test_node_string", String, queue_size=1)
     def str_sub(self, word):
         rospy.loginfo("Sub --> {}".format(word))
 
+    @n.subscriber("/test_node_int", Int64, queue_size=1)
+    def int_sub(self, num):
+        rospy.loginfo("Int Sub --> {}".format(num))
+
+    @n.subscriber("/another_test_node_int", Int64, queue_size=1)
+    def int_sub(self, num):
+        rospy.loginfo("Another Int Sub --> {}".format(num))
+
     @n.main_loop()
     def run(self):
         self.str_pub(self.word)
+        self.int_pub(3).publish("/test_node_int")
+        self.int_pub(3).publish("/another_test_node_int")
