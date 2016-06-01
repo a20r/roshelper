@@ -1,0 +1,39 @@
+<?xml version="1.0"?>
+<package>
+  <name>roshelper</name>
+  <version>0.0.0</version>
+  <description>
+      Using your UAV to provide information to your autonomous car
+  </description>
+  <maintainer email="wallar@mit.edu">Alex Wallar</maintainer>
+  <license>TODO</license>
+  <url type="website">http://github.com/wallarelvo/foresight</url>
+  <buildtool_depend>catkin</buildtool_depend>
+  <build_depend>geometry_msgs</build_depend>
+  <build_depend>nav_msgs</build_depend>
+  <build_depend>roscpp</build_depend>
+  <build_depend>rospy</build_depend>
+  <build_depend>std_msgs</build_depend>
+  <build_depend>apriltags_ros</build_depend>
+  <build_depend>robot_localization</build_depend>
+  <build_depend>usb_cam</build_depend>
+  <build_depend>tf</build_depend>
+  <build_depend>sensor_msgs</build_depend>
+  <build_depend>mavros</build_depend>
+  <build_depend>mavros_extras</build_depend>
+  <build_depend>camera_calibration</build_depend>
+  <run_depend>geometry_msgs</run_depend>
+  <run_depend>nav_msgs</run_depend>
+  <run_depend>roscpp</run_depend>
+  <run_depend>rospy</run_depend>
+  <run_depend>std_msgs</run_depend>
+  <run_depend>apriltags_ros</run_depend>
+  <run_depend>robot_localization</run_depend>
+  <run_depend>usb_cam</run_depend>
+  <run_depend>tf</run_depend>
+  <run_depend>sensor_msgs</run_depend>
+  <run_depend>mavros</run_depend>
+  <run_depend>mavros_extras</run_depend>
+  <run_depend>camera_calibration</run_depend>
+  <export></export>
+</package>
