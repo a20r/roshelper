@@ -89,17 +89,7 @@ class Node(object):
 
     def __start_class(self, cl, *ar, **kw):
         rospy.init_node(self.node_name, **self.kwargs)
-        if "frequency" in self.m_loop_kwargs:
-            freq = self.m_loop_kwargs["frequency"]
-            del self.m_loop_kwargs["frequency"]
-        else:
-            freq = "frequency"
-        if isinstance(freq, str):
-            def_freq = self.m_loop_kwargs.get("default_frequency", 30)
-            freq = rospy.get_param(freq, def_freq)
-        if "default_frequency" in self.m_loop_kwargs:
-            del self.m_loop_kwargs["default_frequency"]
-        rate = rospy.Rate(freq)
+        rate = self.__get_rate(self.m_loop_kwargs)
         nd = cl(*ar, **kw)
         for v in dir(cl):
             self.parents[v] = nd
@@ -115,12 +105,24 @@ class Node(object):
 
     def __start_func(self, cl, *ar, **kw):
         rospy.init_node(self.node_name, **self.kwargs)
-        freq = rospy.get_param("frequency", 3)
-        rate = rospy.Rate(freq)
+        rate = self.__get_rate(kw)
         while not rospy.is_shutdown():
             cl(*ar, **kw)
             rate.sleep()
         return cl
+
+    def __get_rate(self, kw):
+        if "frequency" in kw:
+            freq = kw["frequency"]
+            del kw["frequency"]
+        else:
+            freq = "frequency"
+        if isinstance(freq, str):
+            def_freq = kw.get("default_frequency", 30)
+            freq = rospy.get_param(freq, def_freq)
+        if "default_frequency" in kw:
+            del kw["default_frequency"]
+        return rospy.Rate(freq)
 
 
 class MultiPublisherHelper(object):
