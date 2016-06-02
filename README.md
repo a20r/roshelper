@@ -3,7 +3,7 @@
 A helper library for rospy. `roshelper` provides a variety of helper function
 and decorators to make developing ROS nodes in Python much easier.
 
-# Example using standard rospy
+# Using standard rospy
 ```python
 import rospy
 from std_msgs.msg import String
@@ -60,4 +60,49 @@ if __name__ == "__main__":
         publish_int(3, int_pub_1)
         publish_int(3, int_pub_2)
         rate.sleep()
+```
+
+# Using roshelper
+```
+import roshelper
+import rospy
+from std_msgs.msg import String
+from std_msgs.msg import Int64
+
+
+n = roshelper.Node("test_node", __name__, anonymous=False)
+
+
+@n.publisher("/test_node_string", String)
+def str_pub(word):
+    rospy.loginfo("Pub --> {}".format(word))
+    st = String()
+    st.data = word[::-1]
+    return st
+
+
+@n.publisher(Int64)
+def int_pub(num):
+    rospy.loginfo("Int Pub --> {}".format(num))
+    msg = Int64()
+    msg.data = num
+    return msg
+
+
+@n.subscriber("/test_node_string", String)
+def str_sub(word):
+    rospy.loginfo("Sub --> {}".format(word))
+
+
+@n.subscriber("/test_node_int", Int64)
+@n.subscriber("/another_test_node_int", Int64)
+def int_sub(num, topic):
+    rospy.loginfo("Int Sub ({}) --> {}".format(topic, num))
+
+
+@n.start_node(frequency="frequency", default_frequency=30)
+def run():
+    str_pub("balls")
+    int_pub(3).publish("/test_node_int")
+    int_pub(10).publish("/another_test_node_int")
 ```
