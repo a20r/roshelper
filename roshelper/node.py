@@ -99,7 +99,7 @@ class Node(object):
                 if is_class:
                     self.start_class(cl, *ar, **kw)
                 elif is_func:
-                    self.start_func(*ar, **kw)
+                    self.start_func(cl, *ar, **kw)
             return cl
         return __inner
 
