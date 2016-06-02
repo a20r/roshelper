@@ -21,7 +21,7 @@ class TestNode(object):
         st.data = word[::-1]
         return st
 
-    @n.multi_publisher(Int64, queue_size=1)
+    @n.publisher(Int64, queue_size=1)
     def int_pub(self, num):
         rospy.loginfo("Int Pub --> {}".format(num))
         msg = Int64()

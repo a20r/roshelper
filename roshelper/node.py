@@ -38,18 +38,22 @@ class Node(object):
             return func
         return __decorator
 
-    def publisher(self, topic_name, msg_type, **kwargs):
-        def __decorator(func):
-            args = [topic_name, msg_type]
-            pub = rospy.Publisher(*args, **kwargs)
+    def publisher(self, *upper_args, **kwargs):
+        if isinstance(upper_args[0], str):
+            topic_name, msg_type = upper_args
+            def __decorator(func):
+                args = [topic_name, msg_type]
+                pub = rospy.Publisher(*args, **kwargs)
 
-            def __inner(*args, **kwargs):
-                msg = func(*args, **kwargs)
-                pub.publish(msg)
-            return __inner
-        return __decorator
+                def __inner(*args, **kwargs):
+                    msg = func(*args, **kwargs)
+                    pub.publish(msg)
+                return __inner
+            return __decorator
+        elif isinstance(upper_args[0], types.TypeType):
+            return self.__multi_publisher(upper_args[0], **kwargs)
 
-    def multi_publisher(self, msg_type, **kwargs):
+    def __multi_publisher(self, msg_type, **kwargs):
         kw = kwargs
         topics = dict()
 
@@ -62,7 +66,7 @@ class Node(object):
             return __inner
         return __decorator
 
-    def start_class(self, cl, *ar, **kw):
+    def __start_class(self, cl, *ar, **kw):
         rospy.init_node(self.node_name, **self.kwargs)
         freq = rospy.get_param("frequency", 3)
         rate = rospy.Rate(freq)
@@ -79,7 +83,7 @@ class Node(object):
             rospy.spin()
         return cl
 
-    def start_func(self, cl, *ar, **kw):
+    def __start_func(self, cl, *ar, **kw):
         rospy.init_node(self.node_name, **self.kwargs)
         freq = rospy.get_param("frequency", 3)
         rate = rospy.Rate(freq)
@@ -97,9 +101,9 @@ class Node(object):
                 is_func = isinstance(cl, types.FunctionType)
                 is_class = isinstance(cl, types.TypeType)
                 if is_class:
-                    self.start_class(cl, *ar, **kw)
+                    self.__start_class(cl, *ar, **kw)
                 elif is_func:
-                    self.start_func(cl, *ar, **kw)
+                    self.__start_func(cl, *ar, **kw)
             return cl
         return __inner
 

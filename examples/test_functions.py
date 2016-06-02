@@ -16,7 +16,7 @@ def str_pub(word):
     return st
 
 
-@n.multi_publisher(Int64, queue_size=1)
+@n.publisher(Int64, queue_size=1)
 def int_pub(num):
     rospy.loginfo("Int Pub --> {}".format(num))
     msg = Int64()
