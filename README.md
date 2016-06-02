@@ -16,22 +16,26 @@ from std_msgs.msg import String
 from std_msgs.msg import Int64
 
 
-str_pub = rospy.Publisher("/test_node_string", String, queue_size=1)
-int_pub_1 = rospy.Publisher("/test_node_int", Int64, queue_size=1)
-int_pub_2 = rospy.Publisher("/another_test_node_int", Int64, queue_size=1)
+str_pub = rospy.Publisher("/test_node_string",
+    String, queue_size=1)
+int_pub_1 = rospy.Publisher("/test_node_int",
+    Int64, queue_size=1)
+int_pub_2 = rospy.Publisher("/another_test_node_int",
+    Int64, queue_size=1)
 
 
 def get_int_sub(topic_name):
     def int_sub(num):
-        rospy.loginfo("Int Sub ({}) --> {}".format(topic_name, num))
+        rospy.loginfo("Int Sub ({}) --> {}".format(topic_name,
+                                                   num))
 
 
 def str_sub_callback(word):
     rospy.loginfo("Sub --> {}".format(word))
 
 
-str_sub = rospy.Subscriber("/test_node_string", String, str_sub_callback,
-                           queue_size=1)
+str_sub = rospy.Subscriber("/test_node_string", String,
+    str_sub_callback, queue_size=1)
 
 int_sub_1 = rospy.Subscriber(
     "/test_node_int", Int64,
