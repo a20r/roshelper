@@ -63,7 +63,7 @@ if __name__ == "__main__":
 ```
 
 # Using roshelper
-```
+```python
 import roshelper
 import rospy
 from std_msgs.msg import String
