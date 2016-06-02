@@ -1,10 +1,3 @@
-# roshelper
-
-A helper library for rospy. `roshelper` provides a variety of helper function
-and decorators to make developing ROS nodes in Python much easier.
-
-# Example using standard rospy
-```python
 import rospy
 from std_msgs.msg import String
 from std_msgs.msg import Int64
@@ -60,4 +53,3 @@ if __name__ == "__main__":
         publish_int(3, int_pub_1)
         publish_int(3, int_pub_2)
         rate.sleep()
-```
