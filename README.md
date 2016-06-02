@@ -5,7 +5,10 @@ and decorators to make developing ROS nodes in Python much easier.
 
 # Examples
 `roshelper` can reduce the amount of code you write and make it look less shit.
-Below is an example of how shit your code will look if you just use rospy.
+Below is an example of how shit your code will look if you just use rospy. This
+ROS node has three publishers and three subscribers. Two pub / sub pairs are
+sending and receiving Int64s and one pub / sub pair is sending and receiving a
+string.
 
 ```python
 import rospy
@@ -66,7 +69,9 @@ if __name__ == "__main__":
 ```
 
 Yup, that was ugly. However, with Pythonic power coursing through my veins, I
-have provided some sugar that makes your code look beautiful.
+have provided some sugar that makes your code look beautiful. Using decorators
+and reflection, I am able to turn that ugly mess of text above into a
+structured and readable piece of code.
 
 ```python
 import roshelper
