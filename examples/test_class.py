@@ -34,8 +34,8 @@ class TestNode(object):
 
     @n.subscriber("/test_node_int", Int64)
     @n.subscriber("/another_test_node_int", Int64)
-    def int_sub(self, num):
-        rospy.loginfo("Int Sub --> {}".format(num))
+    def int_sub(self, num, topic):
+        rospy.loginfo("Int Sub ({}) --> {}".format(topic, num))
 
     @n.main_loop()
     def run(self):

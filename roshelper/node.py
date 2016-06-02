@@ -15,6 +15,10 @@ class MultiPublisherHelper(object):
             args = [topic, self.msg_type]
             self.topics[topic] = rospy.Publisher(*args, **self.kwargs)
         self.topics[topic].publish(self.msg)
+        return self.msg
+
+    def msg(self):
+        return self.msg
 
 
 class Node(object):
@@ -32,9 +36,16 @@ class Node(object):
         def __decorator(func):
             def __inner(msg):
                 if "self" in func.func_code.co_varnames:
-                    func(self.parents[func.func_name], msg)
+                    slf = self.parents[func.func_name]
+                    if func.func_code.co_argcount == 2:
+                        return func(slf, msg)
+                    elif func.func_code.co_argcount == 3:
+                        return func(slf, msg, topic_name)
                 else:
-                    func(msg)
+                    if func.func_code.co_argcount == 1:
+                        return func(msg)
+                    elif func.func_code.co_argcount == 2:
+                        return func(msg, topic_name)
             args = [topic_name, msg_type, __inner]
             rospy.Subscriber(*args, **kwargs)
             return func

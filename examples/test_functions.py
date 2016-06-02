@@ -31,8 +31,8 @@ def str_sub(word):
 
 @n.subscriber("/test_node_int", Int64)
 @n.subscriber("/another_test_node_int", Int64)
-def int_sub(num):
-    rospy.loginfo("Int Sub --> {}".format(num))
+def int_sub(num, topic):
+    rospy.loginfo("Int Sub ({}) --> {}".format(topic, num))
 
 
 @n.start_node()
