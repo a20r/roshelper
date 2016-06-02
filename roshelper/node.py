@@ -53,6 +53,29 @@ class Node(object):
         elif isinstance(upper_args[0], types.TypeType):
             return self.__multi_publisher(upper_args[0], **kwargs)
 
+    def start_node(self, *args, **kwargs):
+        ar = args
+        kw = kwargs
+
+        def __inner(cl):
+            if self.is_main:
+                is_func = isinstance(cl, types.FunctionType)
+                is_class = isinstance(cl, types.TypeType)
+                if is_class:
+                    self.__start_class(cl, *ar, **kw)
+                elif is_func:
+                    self.__start_func(cl, *ar, **kw)
+            return cl
+        return __inner
+
+    def main_loop(self, *args, **kwargs):
+        def __inner(func):
+            self.m_loop = func
+            self.m_loop_args = list(args)
+            self.m_loop_kwargs = kwargs
+            return func
+        return __inner
+
     def __multi_publisher(self, msg_type, **kwargs):
         kw = kwargs
         topics = dict()
@@ -91,26 +114,3 @@ class Node(object):
             cl(*ar, **kw)
             rate.sleep()
         return cl
-
-    def start_node(self, *args, **kwargs):
-        ar = args
-        kw = kwargs
-
-        def __inner(cl):
-            if self.is_main:
-                is_func = isinstance(cl, types.FunctionType)
-                is_class = isinstance(cl, types.TypeType)
-                if is_class:
-                    self.__start_class(cl, *ar, **kw)
-                elif is_func:
-                    self.__start_func(cl, *ar, **kw)
-            return cl
-        return __inner
-
-    def main_loop(self, *args, **kwargs):
-        def __inner(func):
-            self.m_loop = func
-            self.m_loop_args = list(args)
-            self.m_loop_kwargs = kwargs
-            return func
-        return __inner
