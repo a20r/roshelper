@@ -1,222 +1,54 @@
-<!doctype html>
+<!DOCTYPE html>
 <html>
-  <head>
-    <meta charset="utf-8">
-    <meta http-equiv="X-UA-Compatible" content="chrome=1">
-    <title>Roshelper by wallarelvo</title>
-    <link rel="stylesheet" href="stylesheets/styles.css">
-    <link rel="stylesheet" href="stylesheets/github-dark.css">
-    <script src="https://ajax.googleapis.com/ajax/libs/jquery/1.7.1/jquery.min.js"></script>
-    <script src="javascripts/respond.js"></script>
-    <!--[if lt IE 9]>
-      <script src="//html5shiv.googlecode.com/svn/trunk/html5.js"></script>
-    <![endif]-->
-    <!--[if lt IE 8]>
-    <link rel="stylesheet" href="stylesheets/ie.css">
-    <![endif]-->
-    <meta name="viewport" content="width=device-width, initial-scale=1, user-scalable=no">
+<head>
+    <title>TITLE</title>  <!-- EDIT ME!! -->
 
-  </head>
-  <body>
-      <div id="header">
-        <nav>
-          <li class="fork"><a href="https://github.com/wallarelvo/roshelper">View On GitHub</a></li>
-          <li class="downloads"><a href="https://github.com/wallarelvo/roshelper/zipball/master">ZIP</a></li>
-          <li class="downloads"><a href="https://github.com/wallarelvo/roshelper/tarball/master">TAR</a></li>
-          <li class="title">DOWNLOADS</li>
-        </nav>
-      </div><!-- end header -->
+    <!-- JQUERY -->
+    <script src="http://code.jquery.com/jquery-1.11.0.min.js"></script>
+    <script src="http://code.jquery.com/ui/1.10.4/jquery-ui.min.js"></script>
 
-    <div class="wrapper">
+    <!-- MARKED -->
+    <script src="//chutsu.github.io/ditto/ver/latest/marked.js"></script>
 
-      <section>
-        <div id="title">
-          <h1>Roshelper</h1>
-          <p>Helper library for ROS</p>
-          <hr>
-          <span class="credits left">Project maintained by <a href="https://github.com/wallarelvo">wallarelvo</a></span>
-          <span class="credits right">Hosted on GitHub Pages &mdash; Theme by <a href="https://twitter.com/michigangraham">mattgraham</a></span>
-        </div>
+    <!-- HIGHLIGHT.JS -->
+    <link rel="stylesheet" href="//chutsu.github.io/ditto/ver/latest/github.css">
+    <script src="//chutsu.github.io/ditto/ver/latest/highlight.js"></script>
 
-        <h1>
-<a id="roshelper" class="anchor" href="#roshelper" aria-hidden="true"><span aria-hidden="true" class="octicon octicon-link"></span></a>roshelper</h1>
+    <!-- DITTO CSS -->
+    <link rel="stylesheet" href="//chutsu.github.io/ditto/ver/latest/ditto.css">
+    <script src="//chutsu.github.io/ditto/ver/latest/js/ditto.js"></script>
+</head>
+<body>
+    <!-- ESSENTIAL -->
+    <div id="sidebar"></div>
+    <div id="content"></div>
+    <div id="hide"></div>
 
-<p>A helper library for rospy. <code>roshelper</code> provides a variety of helper function
-and decorators to make developing ROS nodes in Python much easier.</p>
+    <!-- OPTIONAL -->
+    <div id="back_to_top">top</div>
+    <div id="edit">edit</div>
+    <div id="loading">Loading ...</div>
+    <div id="error"></div>
 
-<h1>
-<a id="examples" class="anchor" href="#examples" aria-hidden="true"><span aria-hidden="true" class="octicon octicon-link"></span></a>Examples</h1>
+    <!-- DITTO -->
+    <script>
+        $(function($) {
+            // essential settings
+            ditto.index = "README.md",
+            ditto.sidebar_file = "sidebar.md",
 
-<p><code>roshelper</code> can reduce the amount of code you write and make it look less shit.
-Below is an example of how shit your code will look if you just use rospy. This
-ROS node has three publishers and three subscribers. Two pub / sub pairs are
-sending and receiving Int64s and one pub / sub pair is sending and receiving a
-string.</p>
+            // optional settings if you want github search
+            ditto.github_username = wallarelvo;   // <------- EDIT ME!!
+            ditto.github_repo = roshelper;       // <------- EDIT ME!!
+            ditto.highlight_code = true;    // <------- EDIT ME!!
 
-<div class="highlight highlight-source-python"><pre><span class="pl-k">import</span> rospy
-<span class="pl-k">from</span> std_msgs.msg <span class="pl-k">import</span> String
-<span class="pl-k">from</span> std_msgs.msg <span class="pl-k">import</span> Int64
+            // where the docs are actually stored on github - so you can edit
+            // e.g. https://github.com/chutsu/ditto/edit/gh-pages
+            ditto.base_url = "https://github.com/wallarelvo/roshelper/tree/gh-pages";            // <------- EDIT ME!!
 
-
-str_pub <span class="pl-k">=</span> rospy.Publisher(<span class="pl-s"><span class="pl-pds">"</span>/test_node_string<span class="pl-pds">"</span></span>, String, <span class="pl-v">queue_size</span><span class="pl-k">=</span><span class="pl-c1">1</span>)
-int_pub_1 <span class="pl-k">=</span> rospy.Publisher(<span class="pl-s"><span class="pl-pds">"</span>/test_node_int<span class="pl-pds">"</span></span>, Int64, <span class="pl-v">queue_size</span><span class="pl-k">=</span><span class="pl-c1">1</span>)
-int_pub_2 <span class="pl-k">=</span> rospy.Publisher(<span class="pl-s"><span class="pl-pds">"</span>/another_test_node_int<span class="pl-pds">"</span></span>, Int64, <span class="pl-v">queue_size</span><span class="pl-k">=</span><span class="pl-c1">1</span>)
-
-
-<span class="pl-k">def</span> <span class="pl-en">get_int_sub</span>(<span class="pl-smi">topic_name</span>):
-    <span class="pl-k">def</span> <span class="pl-en">int_sub</span>(<span class="pl-smi">num</span>):
-        rospy.loginfo(<span class="pl-s"><span class="pl-pds">"</span>Int Sub (<span class="pl-c1">{}</span>) --&gt; <span class="pl-c1">{}</span><span class="pl-pds">"</span></span>.format(topic_name, num))
-
-
-<span class="pl-k">def</span> <span class="pl-en">str_sub_callback</span>(<span class="pl-smi">word</span>):
-    rospy.loginfo(<span class="pl-s"><span class="pl-pds">"</span>Sub --&gt; <span class="pl-c1">{}</span><span class="pl-pds">"</span></span>.format(word))
-
-
-str_sub <span class="pl-k">=</span> rospy.Subscriber(<span class="pl-s"><span class="pl-pds">"</span>/test_node_string<span class="pl-pds">"</span></span>, String, str_sub_callback,
-                           <span class="pl-v">queue_size</span><span class="pl-k">=</span><span class="pl-c1">1</span>)
-
-int_sub_1 <span class="pl-k">=</span> rospy.Subscriber(
-    <span class="pl-s"><span class="pl-pds">"</span>/test_node_int<span class="pl-pds">"</span></span>, Int64,
-    get_int_sub(<span class="pl-s"><span class="pl-pds">"</span>/test_node_int<span class="pl-pds">"</span></span>), <span class="pl-v">queue_size</span><span class="pl-k">=</span><span class="pl-c1">1</span>)
-
-
-int_sub_2 <span class="pl-k">=</span> rospy.Subscriber(
-    <span class="pl-s"><span class="pl-pds">"</span>/another_test_node_int<span class="pl-pds">"</span></span>, Int64,
-    get_int_sub(<span class="pl-s"><span class="pl-pds">"</span>/another_test_node_int<span class="pl-pds">"</span></span>), <span class="pl-v">queue_size</span><span class="pl-k">=</span><span class="pl-c1">1</span>)
-
-
-<span class="pl-k">def</span> <span class="pl-en">publish_int</span>(<span class="pl-smi">num</span>, <span class="pl-smi">pub</span>):
-    rospy.loginfo(<span class="pl-s"><span class="pl-pds">"</span>Int Pub --&gt; <span class="pl-c1">{}</span><span class="pl-pds">"</span></span>.format(num))
-    msg <span class="pl-k">=</span> Int64()
-    msg.data <span class="pl-k">=</span> num
-    pub.publish(msg)
-
-
-<span class="pl-k">def</span> <span class="pl-en">publish_str</span>(<span class="pl-smi">word</span>):
-    rospy.loginfo(<span class="pl-s"><span class="pl-pds">"</span>Pub --&gt; <span class="pl-c1">{}</span><span class="pl-pds">"</span></span>.format(word))
-    st <span class="pl-k">=</span> String()
-    st.data <span class="pl-k">=</span> word[::<span class="pl-k">-</span><span class="pl-c1">1</span>]
-    str_pub.publish(st)
-
-
-<span class="pl-k">if</span> <span class="pl-c1">__name__</span> <span class="pl-k">==</span> <span class="pl-s"><span class="pl-pds">"</span>__main__<span class="pl-pds">"</span></span>:
-    rospy.init_node(<span class="pl-s"><span class="pl-pds">"</span>test_node<span class="pl-pds">"</span></span>, <span class="pl-v">anonymous</span><span class="pl-k">=</span><span class="pl-c1">False</span>)
-    freq <span class="pl-k">=</span> rospy.get_param(<span class="pl-s"><span class="pl-pds">"</span>frequency<span class="pl-pds">"</span></span>, <span class="pl-c1">30</span>)
-    rate <span class="pl-k">=</span> rospy.Rate(freq)
-    <span class="pl-k">while</span> <span class="pl-k">not</span> rospy.is_shutdown():
-        publish_str(<span class="pl-s"><span class="pl-pds">"</span>balls<span class="pl-pds">"</span></span>)
-        publish_int(<span class="pl-c1">3</span>, int_pub_1)
-        publish_int(<span class="pl-c1">3</span>, int_pub_2)
-        rate.sleep()</pre></div>
-
-<p>Yup, that was ugly. However, with Pythonic power coursing through my veins, I
-have provided some sugar that makes your code look beautiful. Using decorators
-and reflection, I am able to turn that ugly mess of text above into a
-structured and readable piece of code.</p>
-
-<div class="highlight highlight-source-python"><pre><span class="pl-k">import</span> roshelper
-<span class="pl-k">import</span> rospy
-<span class="pl-k">from</span> std_msgs.msg <span class="pl-k">import</span> String
-<span class="pl-k">from</span> std_msgs.msg <span class="pl-k">import</span> Int64
-
-
-n <span class="pl-k">=</span> roshelper.Node(<span class="pl-s"><span class="pl-pds">"</span>test_node<span class="pl-pds">"</span></span>, <span class="pl-c1">__name__</span>, <span class="pl-v">anonymous</span><span class="pl-k">=</span><span class="pl-c1">False</span>)
-
-
-<span class="pl-en">@n.publisher</span>(<span class="pl-s"><span class="pl-pds">"</span>/test_node_string<span class="pl-pds">"</span></span>, String)
-<span class="pl-k">def</span> <span class="pl-en">str_pub</span>(<span class="pl-smi">word</span>):
-    rospy.loginfo(<span class="pl-s"><span class="pl-pds">"</span>Pub --&gt; <span class="pl-c1">{}</span><span class="pl-pds">"</span></span>.format(word))
-    st <span class="pl-k">=</span> String()
-    st.data <span class="pl-k">=</span> word[::<span class="pl-k">-</span><span class="pl-c1">1</span>]
-    <span class="pl-k">return</span> st
-
-
-<span class="pl-en">@n.publisher</span>(Int64)
-<span class="pl-k">def</span> <span class="pl-en">int_pub</span>(<span class="pl-smi">num</span>):
-    rospy.loginfo(<span class="pl-s"><span class="pl-pds">"</span>Int Pub --&gt; <span class="pl-c1">{}</span><span class="pl-pds">"</span></span>.format(num))
-    msg <span class="pl-k">=</span> Int64()
-    msg.data <span class="pl-k">=</span> num
-    <span class="pl-k">return</span> msg
-
-
-<span class="pl-en">@n.subscriber</span>(<span class="pl-s"><span class="pl-pds">"</span>/test_node_string<span class="pl-pds">"</span></span>, String)
-<span class="pl-k">def</span> <span class="pl-en">str_sub</span>(<span class="pl-smi">word</span>):
-    rospy.loginfo(<span class="pl-s"><span class="pl-pds">"</span>Sub --&gt; <span class="pl-c1">{}</span><span class="pl-pds">"</span></span>.format(word))
-
-
-<span class="pl-en">@n.subscriber</span>(<span class="pl-s"><span class="pl-pds">"</span>/test_node_int<span class="pl-pds">"</span></span>, Int64)
-<span class="pl-en">@n.subscriber</span>(<span class="pl-s"><span class="pl-pds">"</span>/another_test_node_int<span class="pl-pds">"</span></span>, Int64)
-<span class="pl-k">def</span> <span class="pl-en">int_sub</span>(<span class="pl-smi">num</span>, <span class="pl-smi">topic</span>):
-    rospy.loginfo(<span class="pl-s"><span class="pl-pds">"</span>Int Sub (<span class="pl-c1">{}</span>) --&gt; <span class="pl-c1">{}</span><span class="pl-pds">"</span></span>.format(topic, num))
-
-
-<span class="pl-en">@n.start_node</span>(<span class="pl-v">frequency</span><span class="pl-k">=</span><span class="pl-s"><span class="pl-pds">"</span>frequency<span class="pl-pds">"</span></span>, <span class="pl-v">default_frequency</span><span class="pl-k">=</span><span class="pl-c1">30</span>)
-<span class="pl-k">def</span> <span class="pl-en">run</span>():
-    str_pub(<span class="pl-s"><span class="pl-pds">"</span>balls<span class="pl-pds">"</span></span>)
-    int_pub(<span class="pl-c1">3</span>).publish(<span class="pl-s"><span class="pl-pds">"</span>/test_node_int<span class="pl-pds">"</span></span>)
-    int_pub(<span class="pl-c1">10</span>).publish(<span class="pl-s"><span class="pl-pds">"</span>/another_test_node_int<span class="pl-pds">"</span></span>)</pre></div>
-
-<p><em>Wait, wait, wait a second. What is going on?</em></p>
-
-<p>Well, I am using
-<a href="https://realpython.com/blog/python/primer-on-python-decorators/">decorators</a>
-to hide of all of the dirty work of making publishers, subscribers, and ROS
-nodes. So for instance, in the <code>str_pub</code> function, the value that is returned
-is then published to the "/test_node_string" topic. Similarly, in <code>str_sub</code>,
-whenever a message is received on the "/test_node_string" topic, the <code>str_sub</code>
-function is called with the message as the argument.</p>
-
-<p><em>Wait, wait, wait a second, this obviously doesn't work with classes</em></p>
-
-<p>Yes it does.</p>
-
-<div class="highlight highlight-source-python"><pre><span class="pl-k">import</span> roshelper
-<span class="pl-k">import</span> rospy
-<span class="pl-k">from</span> std_msgs.msg <span class="pl-k">import</span> String
-<span class="pl-k">from</span> std_msgs.msg <span class="pl-k">import</span> Int64
-
-
-n <span class="pl-k">=</span> roshelper.Node(<span class="pl-s"><span class="pl-pds">"</span>test_node<span class="pl-pds">"</span></span>, <span class="pl-c1">__name__</span>, <span class="pl-v">anonymous</span><span class="pl-k">=</span><span class="pl-c1">False</span>)
-
-
-<span class="pl-en">@n.start_node</span>(<span class="pl-v">word</span><span class="pl-k">=</span><span class="pl-s"><span class="pl-pds">"</span>balls<span class="pl-pds">"</span></span>)
-<span class="pl-k">class</span> <span class="pl-en">TestNode</span>(<span class="pl-c1">object</span>):
-
-    <span class="pl-k">def</span> <span class="pl-c1">__init__</span>(<span class="pl-smi"><span class="pl-smi">self</span></span>, <span class="pl-smi">word</span>):
-        <span class="pl-v">self</span>.word <span class="pl-k">=</span> word
-
-    <span class="pl-en">@n.publisher</span>(<span class="pl-s"><span class="pl-pds">"</span>/test_node_string<span class="pl-pds">"</span></span>, String)
-    <span class="pl-k">def</span> <span class="pl-en">str_pub</span>(<span class="pl-smi"><span class="pl-smi">self</span></span>, <span class="pl-smi">word</span>):
-        rospy.loginfo(<span class="pl-s"><span class="pl-pds">"</span>Pub --&gt; <span class="pl-c1">{}</span><span class="pl-pds">"</span></span>.format(word))
-        st <span class="pl-k">=</span> String()
-        st.data <span class="pl-k">=</span> word[::<span class="pl-k">-</span><span class="pl-c1">1</span>]
-        <span class="pl-k">return</span> st
-
-    <span class="pl-en">@n.publisher</span>(Int64)
-    <span class="pl-k">def</span> <span class="pl-en">int_pub</span>(<span class="pl-smi"><span class="pl-smi">self</span></span>, <span class="pl-smi">num</span>):
-        rospy.loginfo(<span class="pl-s"><span class="pl-pds">"</span>Int Pub --&gt; <span class="pl-c1">{}</span><span class="pl-pds">"</span></span>.format(num))
-        msg <span class="pl-k">=</span> Int64()
-        msg.data <span class="pl-k">=</span> num
-        <span class="pl-k">return</span> msg
-
-    <span class="pl-en">@n.subscriber</span>(<span class="pl-s"><span class="pl-pds">"</span>/test_node_string<span class="pl-pds">"</span></span>, String)
-    <span class="pl-k">def</span> <span class="pl-en">str_sub</span>(<span class="pl-smi"><span class="pl-smi">self</span></span>, <span class="pl-smi">word</span>):
-        rospy.loginfo(<span class="pl-s"><span class="pl-pds">"</span>Sub --&gt; <span class="pl-c1">{}</span><span class="pl-pds">"</span></span>.format(word))
-
-    <span class="pl-en">@n.subscriber</span>(<span class="pl-s"><span class="pl-pds">"</span>/test_node_int<span class="pl-pds">"</span></span>, Int64)
-    <span class="pl-en">@n.subscriber</span>(<span class="pl-s"><span class="pl-pds">"</span>/another_test_node_int<span class="pl-pds">"</span></span>, Int64)
-    <span class="pl-k">def</span> <span class="pl-en">int_sub</span>(<span class="pl-smi"><span class="pl-smi">self</span></span>, <span class="pl-smi">num</span>, <span class="pl-smi">topic</span>):
-        rospy.loginfo(<span class="pl-s"><span class="pl-pds">"</span>Int Sub (<span class="pl-c1">{}</span>) --&gt; <span class="pl-c1">{}</span><span class="pl-pds">"</span></span>.format(topic, num))
-
-    <span class="pl-en">@n.main_loop</span>(<span class="pl-v">frequency</span><span class="pl-k">=</span><span class="pl-s"><span class="pl-pds">"</span>frequency<span class="pl-pds">"</span></span>, <span class="pl-v">default_frequency</span><span class="pl-k">=</span><span class="pl-c1">30</span>)
-    <span class="pl-k">def</span> <span class="pl-en">run</span>(<span class="pl-smi"><span class="pl-smi">self</span></span>):
-        <span class="pl-v">self</span>.str_pub(<span class="pl-v">self</span>.word)
-        <span class="pl-v">self</span>.int_pub(<span class="pl-c1">3</span>).publish(<span class="pl-s"><span class="pl-pds">"</span>/test_node_int<span class="pl-pds">"</span></span>)
-        <span class="pl-v">self</span>.int_pub(<span class="pl-c1">10</span>).publish(<span class="pl-s"><span class="pl-pds">"</span>/another_test_node_int<span class="pl-pds">"</span></span>)</pre></div>
-      </section>
-
-    </div>
-    <!--[if !IE]><script>fixScale(document);</script><![endif]-->
-    
-  </body>
+            // run
+            ditto.run();
+        });
+    </script>
+</body>
 </html>
