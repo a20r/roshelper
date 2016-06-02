@@ -37,7 +37,7 @@ class TestNode(object):
     def int_sub(self, num, topic):
         rospy.loginfo("Int Sub ({}) --> {}".format(topic, num))
 
-    @n.main_loop()
+    @n.main_loop(frequency="frequency", default_frequency=30)
     def run(self):
         self.str_pub(self.word)
         self.int_pub(3).publish("/test_node_int")

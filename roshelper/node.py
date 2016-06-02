@@ -3,24 +3,6 @@ import rospy
 import types
 
 
-class MultiPublisherHelper(object):
-    def __init__(self, msg, msg_type, topics, **kwargs):
-        self.msg = msg
-        self.msg_type = msg_type
-        self.topics = topics
-        self.kwargs = kwargs
-
-    def publish(self, topic):
-        if not topic in self.topics:
-            args = [topic, self.msg_type]
-            self.topics[topic] = rospy.Publisher(*args, **self.kwargs)
-        self.topics[topic].publish(self.msg)
-        return self.msg
-
-    def msg(self):
-        return self.msg
-
-
 class Node(object):
 
     def __init__(self, node_name, pyname, **kwargs):
@@ -107,7 +89,16 @@ class Node(object):
 
     def __start_class(self, cl, *ar, **kw):
         rospy.init_node(self.node_name, **self.kwargs)
-        freq = rospy.get_param("frequency", 3)
+        if "frequency" in self.m_loop_kwargs:
+            freq = self.m_loop_kwargs["frequency"]
+            del self.m_loop_kwargs["frequency"]
+        else:
+            freq = "frequency"
+        if isinstance(freq, str):
+            def_freq = self.m_loop_kwargs.get("default_frequency", 30)
+            freq = rospy.get_param(freq, def_freq)
+        if "default_frequency" in self.m_loop_kwargs:
+            del self.m_loop_kwargs["default_frequency"]
         rate = rospy.Rate(freq)
         nd = cl(*ar, **kw)
         for v in dir(cl):
@@ -130,3 +121,21 @@ class Node(object):
             cl(*ar, **kw)
             rate.sleep()
         return cl
+
+
+class MultiPublisherHelper(object):
+    def __init__(self, msg, msg_type, topics, **kwargs):
+        self.msg = msg
+        self.msg_type = msg_type
+        self.topics = topics
+        self.kwargs = kwargs
+
+    def publish(self, topic):
+        if not topic in self.topics:
+            args = [topic, self.msg_type]
+            self.topics[topic] = rospy.Publisher(*args, **self.kwargs)
+        self.topics[topic].publish(self.msg)
+        return self.msg
+
+    def msg(self):
+        return self.msg
