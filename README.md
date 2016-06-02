@@ -3,7 +3,10 @@
 A helper library for rospy. `roshelper` provides a variety of helper function
 and decorators to make developing ROS nodes in Python much easier.
 
-# Using standard rospy
+# Examples
+`roshelper` can reduce the amount of code you write and make it look less shit.
+Below is an example of how shit your code will look if you just use rospy.
+
 ```python
 import rospy
 from std_msgs.msg import String
@@ -62,7 +65,9 @@ if __name__ == "__main__":
         rate.sleep()
 ```
 
-# Using roshelper
+Yup, that was ugly. However, with Pythonic power coursing through my veins, I
+have provided some sugar that makes your code look beautiful.
+
 ```python
 import roshelper
 import rospy
