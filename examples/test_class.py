@@ -14,26 +14,26 @@ class TestNode(object):
     def __init__(self, word):
         self.word = word
 
-    @n.publisher("/test_node_string", String, queue_size=1)
+    @n.publisher("/test_node_string", String)
     def str_pub(self, word):
         rospy.loginfo("Pub --> {}".format(word))
         st = String()
         st.data = word[::-1]
         return st
 
-    @n.publisher(Int64, queue_size=1)
+    @n.publisher(Int64)
     def int_pub(self, num):
         rospy.loginfo("Int Pub --> {}".format(num))
         msg = Int64()
         msg.data = num
         return msg
 
-    @n.subscriber("/test_node_string", String, queue_size=1)
+    @n.subscriber("/test_node_string", String)
     def str_sub(self, word):
         rospy.loginfo("Sub --> {}".format(word))
 
-    @n.subscriber("/test_node_int", Int64, queue_size=1)
-    @n.subscriber("/another_test_node_int", Int64, queue_size=1)
+    @n.subscriber("/test_node_int", Int64)
+    @n.subscriber("/another_test_node_int", Int64)
     def int_sub(self, num):
         rospy.loginfo("Int Sub --> {}".format(num))
 

@@ -8,7 +8,7 @@ from std_msgs.msg import Int64
 n = roshelper.Node("test_node", __name__, anonymous=False)
 
 
-@n.publisher("/test_node_string", String, queue_size=1)
+@n.publisher("/test_node_string", String)
 def str_pub(word):
     rospy.loginfo("Pub --> {}".format(word))
     st = String()
@@ -16,7 +16,7 @@ def str_pub(word):
     return st
 
 
-@n.publisher(Int64, queue_size=1)
+@n.publisher(Int64)
 def int_pub(num):
     rospy.loginfo("Int Pub --> {}".format(num))
     msg = Int64()
@@ -24,13 +24,13 @@ def int_pub(num):
     return msg
 
 
-@n.subscriber("/test_node_string", String, queue_size=1)
+@n.subscriber("/test_node_string", String)
 def str_sub(word):
     rospy.loginfo("Sub --> {}".format(word))
 
 
-@n.subscriber("/test_node_int", Int64, queue_size=1)
-@n.subscriber("/another_test_node_int", Int64, queue_size=1)
+@n.subscriber("/test_node_int", Int64)
+@n.subscriber("/another_test_node_int", Int64)
 def int_sub(num):
     rospy.loginfo("Int Sub --> {}".format(num))
 

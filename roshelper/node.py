@@ -27,6 +27,8 @@ class Node(object):
         self.m_loop = None
 
     def subscriber(self, topic_name, msg_type, **kwargs):
+        if not "queue_size" in kwargs:
+            kwargs["queue_size"] = 1
         def __decorator(func):
             def __inner(msg):
                 if "self" in func.func_code.co_varnames:
@@ -39,6 +41,8 @@ class Node(object):
         return __decorator
 
     def publisher(self, *upper_args, **kwargs):
+        if not "queue_size" in kwargs:
+            kwargs["queue_size"] = 1
         if isinstance(upper_args[0], str):
             topic_name, msg_type = upper_args
             def __decorator(func):
@@ -48,6 +52,7 @@ class Node(object):
                 def __inner(*args, **kwargs):
                     msg = func(*args, **kwargs)
                     pub.publish(msg)
+                    return msg
                 return __inner
             return __decorator
         elif isinstance(upper_args[0], types.TypeType):
