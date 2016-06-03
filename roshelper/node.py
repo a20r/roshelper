@@ -109,8 +109,23 @@ class Node(object):
             return func(msg, topic_name)
 
     def __start_class(self, cl, *ar, **kw):
+        vrs = cl.__init__.func_code.co_varnames
+        class_args = list()
+        for v in vrs:
+            if not v == "self":
+                arg_tuple = kw.get(v)
+                if arg_tuple is None or len(arg_tuple) == 0:
+                    default_var = None
+                    scope = "~"
+                elif len(arg_tuple) == 1:
+                    default_var = arg_tuple[0]
+                    scope = "~"
+                else:
+                    scope, default_var = arg_tuple
+                arg = rospy.get_param(scope + v, default_var)
+                class_args.append(arg)
         rate = self.__get_rate(self.m_loop_kwargs)
-        nd = cl(*ar, **kw)
+        nd = cl(*class_args)
         self.slf = nd
         if not self.m_loop is None:
             while not rospy.is_shutdown():
