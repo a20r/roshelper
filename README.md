@@ -121,6 +121,7 @@ just run the commands below.
 ```bash
 $ cd <your projects directory>
 $ git clone https://github.com/wallarelvo/roshelper
+$ cd roshelper
 $ python setup.py install
 ```
 
