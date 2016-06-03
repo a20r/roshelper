@@ -15,7 +15,7 @@ class Node(object):
         self.subscribers = list()
         self.subscribers_init = list()
 
-    def start(self):
+    def start(self, spin=False):
         rospy.init_node(self.node_name, **self.kwargs)
         for args, kwargs in self.subscribers:
             self.subscribers_init.append(rospy.Subscriber(*args, **kwargs))
@@ -30,6 +30,8 @@ class Node(object):
                                        kwargs=self.cl_kwargs)
         self.thread.daemon = True
         self.thread.start()
+        if spin:
+            rospy.spin()
         return self
 
     def subscriber(self, topic_name, msg_type, **kwargs):
@@ -114,10 +116,11 @@ class Node(object):
         for v in vrs:
             if not v == "self":
                 arg_tuple = kw.get(v)
+                is_tuple = isinstance(arg_tuple, types.TupleType)
                 if arg_tuple is None or len(arg_tuple) == 0:
                     default_var = None
                     scope = "~"
-                elif len(arg_tuple) == 1:
+                elif not is_tuple or len(arg_tuple) == 1:
                     default_var = arg_tuple[0]
                     scope = "~"
                 else:

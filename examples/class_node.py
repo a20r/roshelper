@@ -8,7 +8,7 @@ from std_msgs.msg import Int64
 n = roshelper.Node("test_node", anonymous=False)
 
 
-@n.start_node(word=("~", "balls"))
+@n.start_node(word="balls")
 class TestNode(object):
 
     def __init__(self, word):
@@ -45,5 +45,4 @@ class TestNode(object):
 
 
 if __name__ == "__main__":
-    n.start()
-    rospy.spin()
+    n.start(spin=True)
