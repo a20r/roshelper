@@ -35,7 +35,7 @@ def int_sub(num, topic):
     rospy.loginfo("Int Sub ({}) --> {}".format(topic, num))
 
 
-@n.start_node(frequency="frequency", default_frequency=30)
+@n.entry_point(frequency="frequency", default_frequency=30)
 def run():
     str_pub("balls")
     int_pub(3).publish("/test_node_int")
