@@ -38,3 +38,6 @@ opposed to when you call `b = bar(...)`, `b` will be a special multi-publisher
 object that allows you to publish the message to any topic you like with the
 correct message type. The multi-publisher does have a method, `msg()`, that
 allows you to retrieve the return result from `bar`.
+
+Please note that the return values from `foo` and `bar` must be valid ROS
+messages.
