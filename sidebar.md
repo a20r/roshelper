@@ -5,5 +5,6 @@ version 0.1
 
 [ditto:searchbar]
 
-## Contents
+## Index
+- [Home]()
 - [Publishers](#docs/publishers)

@@ -7,6 +7,7 @@ Python much easier.
 Contents:
 - Quick Start
 - How Do I Get It?
+- Where Do I Go From Here?
 
 ## Quick Start
 
@@ -122,3 +123,9 @@ $ cd <your projects directory>
 $ git clone https://github.com/wallarelvo/roshelper
 $ python setup.py install
 ```
+
+## Where Do I Go From Here?
+
+Please look at the contents in the sidebar for detailed explanations of how the
+different components of `roshelper` work. Also, look these
+[examples](https://github.com/wallarelvo/roshelper/tree/master/examples).
