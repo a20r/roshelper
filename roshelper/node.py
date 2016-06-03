@@ -1,35 +1,49 @@
 
 import rospy
 import types
+import threading
 
 
 class Node(object):
 
-    def __init__(self, node_name, pyname, **kwargs):
+    def __init__(self, node_name, **kwargs):
         self.node_name = node_name
         self.kwargs = kwargs
-        self.is_main = pyname == "__main__"
-        self.parents = dict()
         self.m_loop = None
+        self.thread = None
+        self.cl = None
+        self.subscribers = list()
+        self.subscribers_init = list()
+
+    def start(self):
+        rospy.init_node(self.node_name, **self.kwargs)
+        for args, kwargs in self.subscribers:
+            self.subscribers_init.append(rospy.Subscriber(*args, **kwargs))
+        is_func = isinstance(self.cl, types.FunctionType)
+        is_class = isinstance(self.cl, types.TypeType)
+        if is_class:
+            targ = self.__start_class
+        elif is_func:
+            targ = self.__start_func
+        self.thread = threading.Thread(target=targ,
+                                       args=(self.cl,) + self.cl_args,
+                                       kwargs=self.cl_kwargs)
+        self.thread.daemon = True
+        self.thread.start()
+        return self
 
     def subscriber(self, topic_name, msg_type, **kwargs):
         if not "queue_size" in kwargs:
             kwargs["queue_size"] = 1
+
         def __decorator(func):
             def __inner(msg):
                 if "self" in func.func_code.co_varnames:
-                    slf = self.parents[func.func_name]
-                    if func.func_code.co_argcount == 2:
-                        return func(slf, msg)
-                    elif func.func_code.co_argcount == 3:
-                        return func(slf, msg, topic_name)
+                    return self.__class_subscriber(func, msg, topic_name)
                 else:
-                    if func.func_code.co_argcount == 1:
-                        return func(msg)
-                    elif func.func_code.co_argcount == 2:
-                        return func(msg, topic_name)
+                    return self.__function_subscriber(func, msg, topic_name)
             args = [topic_name, msg_type, __inner]
-            rospy.Subscriber(*args, **kwargs)
+            self.subscribers.append((args, kwargs))
             return func
         return __decorator
 
@@ -38,6 +52,7 @@ class Node(object):
             kwargs["queue_size"] = 1
         if isinstance(upper_args[0], str):
             topic_name, msg_type = upper_args
+
             def __decorator(func):
                 args = [topic_name, msg_type]
                 pub = rospy.Publisher(*args, **kwargs)
@@ -52,17 +67,11 @@ class Node(object):
             return self.__multi_publisher(upper_args[0], **kwargs)
 
     def start_node(self, *args, **kwargs):
-        ar = args
-        kw = kwargs
+        self.cl_args = args
+        self.cl_kwargs = kwargs
 
         def __inner(cl):
-            if self.is_main:
-                is_func = isinstance(cl, types.FunctionType)
-                is_class = isinstance(cl, types.TypeType)
-                if is_class:
-                    self.__start_class(cl, *ar, **kw)
-                elif is_func:
-                    self.__start_func(cl, *ar, **kw)
+            self.cl = cl
             return cl
         return __inner
 
@@ -87,24 +96,30 @@ class Node(object):
             return __inner
         return __decorator
 
+    def __class_subscriber(self, func, msg, topic_name):
+        if func.func_code.co_argcount == 2:
+            return func(self.slf, msg)
+        elif func.func_code.co_argcount == 3:
+            return func(self.slf, msg, topic_name)
+
+    def __function_subscriber(self, func, msg, topic_name):
+        if func.func_code.co_argcount == 1:
+            return func(msg)
+        elif func.func_code.co_argcount == 2:
+            return func(msg, topic_name)
+
     def __start_class(self, cl, *ar, **kw):
-        rospy.init_node(self.node_name, **self.kwargs)
         rate = self.__get_rate(self.m_loop_kwargs)
         nd = cl(*ar, **kw)
-        for v in dir(cl):
-            self.parents[v] = nd
+        self.slf = nd
         if not self.m_loop is None:
             while not rospy.is_shutdown():
-                slf = self.parents[self.m_loop.func_name]
-                args = [slf] + self.m_loop_args
+                args = [self.slf] + self.m_loop_args
                 self.m_loop(*args, **self.m_loop_kwargs)
                 rate.sleep()
-        else:
-            rospy.spin()
         return cl
 
     def __start_func(self, cl, *ar, **kw):
-        rospy.init_node(self.node_name, **self.kwargs)
         rate = self.__get_rate(kw)
         while not rospy.is_shutdown():
             cl(*ar, **kw)
@@ -126,6 +141,7 @@ class Node(object):
 
 
 class MultiPublisherHelper(object):
+
     def __init__(self, msg, msg_type, topics, **kwargs):
         self.msg = msg
         self.msg_type = msg_type

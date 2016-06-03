@@ -5,7 +5,7 @@ from std_msgs.msg import String
 from std_msgs.msg import Int64
 
 
-n = roshelper.Node("test_node", __name__, anonymous=False)
+n = roshelper.Node("test_node", anonymous=False)
 
 
 @n.start_node(word="balls")
@@ -42,3 +42,8 @@ class TestNode(object):
         self.str_pub(self.word)
         self.int_pub(3).publish("/test_node_int")
         self.int_pub(10).publish("/another_test_node_int")
+
+
+if __name__ == "__main__":
+    n.start()
+    rospy.spin()
