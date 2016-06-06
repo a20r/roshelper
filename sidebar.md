@@ -11,3 +11,4 @@ Version 0.1
 - [**Subscribers**](#docs/subscribers)
 - [**Entry Points**](#docs/entry_points)
 - [**Using Classes**](#docs/using_classes)
+- [**Using Multiple Files**](#docs/using_multiple_files)

@@ -71,3 +71,7 @@ def subscribe_sum(num, topic_name):
 
 Now, `subscribe_sum` will be able to receive messages from multiple topics, but
 will also be able to determine which topic the message was received over.
+
+## Important Note
+The `subscriber` decorator also takes keyword arguments such as `queue_size`
+which is used by the underlying rospy publisher.

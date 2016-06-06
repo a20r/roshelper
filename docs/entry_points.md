@@ -55,4 +55,6 @@ def run():
 
 In order to run a node using `roshelper`, you must call `n.start`. This will
 instantiate the publishers and subscribers and will call start the thread
-running the entry point loop.
+running the entry point loop. Also note that the `start` function also takes
+keyword arguments such as `anonymous` which is used by the underlying rospy
+`init_node`.

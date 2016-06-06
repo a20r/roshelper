@@ -14,6 +14,7 @@ below.
 
 ```python
 import roshelper
+from std_msgs.msg import Int64
 
 n = roshelper.Node("summer_publisher")
 
@@ -47,6 +48,7 @@ call.
 
 ```python
 import roshelper
+from std_msgs.msg import Int64
 
 n = roshelper.Node("summer_publisher")
 
@@ -77,4 +79,6 @@ decorating function) without publishing it.
 ## Important Note
 
 All return values from an function being decorated by `publisher` must return
-the ROS message type specified in the decorator.
+the ROS message type specified in the decorator. The `publisher` decorator also
+takes keyword arguments such as `queue_size` which are used the underlying
+rospy publisher.
