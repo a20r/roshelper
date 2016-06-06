@@ -23,8 +23,12 @@ def publish_sum(a, b, c):
     num.data = a + b + c
     return num
 
+...
+
 # publishes to "/sum" and `val == num`
 val = publish_sum(1, 2, 3)
+
+...
 ```
 
 This function computes the sum of three numbers, marshals it into a ROS
@@ -52,11 +56,15 @@ def publish_sum(a, b, c):
     num.data = a + b + c
     return num
 
+...
+
 # publishes to "/smaller_sum" and `small_sum == num`
 small_sum = publish_sum(1, 2, 3).publish("/smaller_sum")
 
 # publishes to "/larger_sum" and `large_sum == num`
 large_sum = publish_sum(10, 20, 30).publish("/larger_sum")
+
+...
 ```
 
 In the example above, `publish_sum` is a function that will return an `Int64`.

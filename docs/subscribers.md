@@ -12,12 +12,15 @@ that function as the callback for a topic. This is shown below.
 ```python
 import roshelper
 import rospy
+from std_msgs.msg import Int64
 
 n = roshelper.Node("summer_listener")
 
 @n.subscriber("/sum", Int64)
 def subscribe_sum(num):
     rospy.loginfo("Num: {}".format(num))
+
+...
 ```
 
 In this simple example, the `subscribe_sum` function is called whenever a
@@ -32,6 +35,7 @@ decorators to the same function. This is shown below.
 ```python
 import roshelper
 import rospy
+from std_msgs.msg import Int64
 
 n = roshelper.Node("summer_listener")
 
@@ -39,6 +43,8 @@ n = roshelper.Node("summer_listener")
 @n.subscriber("/larger_sum", Int64)
 def subscribe_sum(num):
     rospy.loginfo("Num: {}".format(num))
+
+...
 ```
 
 In this example, `subscribe_sum` will be called whenever the "/smaller_sum" or
@@ -51,6 +57,7 @@ is shown below.
 ```python
 import roshelper
 import rospy
+from std_msgs.msg import Int64
 
 n = roshelper.Node("summer_listener")
 
@@ -58,6 +65,8 @@ n = roshelper.Node("summer_listener")
 @n.subscriber("/larger_sum", Int64)
 def subscribe_sum(num, topic_name):
     rospy.loginfo("Num ({}): {}".format(topic_name, num))
+
+...
 ```
 
 Now, `subscribe_sum` will be able to receive messages from multiple topics, but

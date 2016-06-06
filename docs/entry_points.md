@@ -38,6 +38,8 @@ be automatically looked up and used as the frequency. This is shown below.
 
 ```python
 @n.entry_point(frequency="~frequency")
+def run():
+    ...
 ```
 
 A default argument can also be provided in case the parameter has not been
@@ -45,5 +47,12 @@ provided in `rosrun` or `roslaunch`.
 
 ```python 
 @n.entry_point(frequency="~frequency", default_frequency=30)
+def run():
+    ...
 ```
 
+## Important Note
+
+In order to run a node using `roshelper`, you must call `n.start`. This will
+instantiate the publishers and subscribers and will call start the thread
+running the entry point loop.

@@ -10,3 +10,4 @@ Version 0.1
 - [**Publishers**](#docs/publishers)
 - [**Subscribers**](#docs/subscribers)
 - [**Entry Points**](#docs/entry_points)
+- [**Using Classes**](#docs/using_classes)
