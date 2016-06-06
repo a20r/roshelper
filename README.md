@@ -1,6 +1,6 @@
 # RosHelper
 
-A Python library that makes using `rospy` less painful. `roshelper` provides a
+A Python library that makes using `rospy` a bit easier. `roshelper` provides a
 variety of helper function and decorators that makes developing ROS nodes in
 Python much easier.
 
