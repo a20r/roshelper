@@ -1,10 +1,11 @@
 
-from distutils.core import setup
+from setuptools import setup
 
 setup(name='roshelper',
-      version='1.0',
+      version='0.1.2',
       description='Making rospy just a bit easier',
       author='Alex Wallar',
-      author_email='wallar@mit.edu',
-      url='http://github.com/wallarelvo/roshelper',
+      author_email='wallarelvo@gmail.com',
+      url='http://wallarelvo.github.io/roshelper',
+      license="GNU GPL V3",
       packages=['roshelper'],)
