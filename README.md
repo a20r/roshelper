@@ -116,13 +116,10 @@ decorators](https://realpython.com/blog/python/primer-on-python-decorators/)
 
 Glad you asked. First you need to [install
 ROS](http://wiki.ros.org/indigo/Installation/Ubuntu). Once you have done that,
-just run the commands below.
+just install `roshelper` with pip.
 
 ```bash
-$ cd <your projects directory>
-$ git clone https://github.com/wallarelvo/roshelper
-$ cd roshelper
-$ python setup.py install
+$ pip install roshelper
 ```
 
 ## Where Do I Go From Here?
