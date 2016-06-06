@@ -1,43 +1,64 @@
 # Publishers
 
-The publisher decorator allows you to call functions that automatically publish
-to specified topics. The decorator allows you to publish to a predefined
-topic as shown below.
+The `publisher` decorator allows you to call functions that automatically
+publish to specified topics. The decorator allows you to either publish to a
+single topic specified in the decorator or to publish to multiple topics using
+a *multi-publisher* object.
 
-```python
-@n.publisher("/topic", SomeMsgType)
-def foo(arg1, arg2, ...):
-    ...
-    return baz
+## Single Topic Publisher
 
-# publishes to "/topic" and `a == baz`
-a = foo(1, "hello", ...)
-```
-
-The decorator also allows you to publish to an arbitrary set of topics as shown
+By specifying the topic name as the first argument in the decorator, the return
+value of the decorating function will be automatically published to the
+specified topic whenever said function is called. A simple example is shown
 below.
 
 ```python
-@n.publisher(SomeMsgType)
-def bar(arg1, arg2, ...):
-    ...
-    return baz
+@n.publisher("/sum", Int64)
+def publish_sum(a, b, c):
+    num = Int64()
+    num.data = a + b + c
+    return num
 
-# publishes to "/topic_1" and `b.msg() == baz`
-b = bar(1, "hello", ...).publish("/topic_1")
-
-# publishes to "/topic_2"
-bar(2, "there", ...).publish("/topic_2")
+# publishes to "/sum" and `val == num`
+val = publish_sum(1, 2, 3)
 ```
 
-In both cases, the return value of the function you are decorating gets
-published to a topic you either predefined or specified at the time of
-the `publish` call. The only difference between these two cases, is that when
-you call `a = foo(...)`, `a` will be whatever `foo` would normally return, as
-opposed to when you call `b = bar(...)`, `b` will be a special multi-publisher
-object that allows you to publish the message to any topic you like with the
-correct message type. The multi-publisher does have a method, `msg()`, that
-allows you to retrieve the return result from `bar`.
+This function computes the sum of three numbers, marshals it into a ROS
+message, and returns the message. The return value will be automatically
+published to the "/sum" topic whenever `publish_sum` is called. The return
+value of `publish_sum` will also be the message.
 
-Please note that the return values from `foo` and `bar` must be valid ROS
-messages.
+## Multi-Publishers
+
+The `publisher` decorator also allows you to publish to an arbitrary set of
+topics. This works the similarly to example above, except the topic is not
+specified in the decorator arguments. Instead when you call the decorating
+function, you will be returned a `MultiPublisher` object that allows you to
+call the `publish` method to specify the topic at the time of the function
+call.
+
+```python
+@n.publisher(Int64)
+def publish_sum(a, b, c):
+    num = Int64()
+    num.data = a + b + c
+    return num
+
+# publishes to "/smaller_sum" and `small_sum == num`
+small_sum = publish_sum(1, 2, 3).publish("/smaller_sum")
+
+# publishes to "/larger_sum" and `large_sum == num`
+large_sum = publish_sum(10, 20, 30).publish("/larger_sum")
+```
+
+In the example above, `publish_sum` is a function that will return an `Int64`.
+This `Int64` produced will then be used to publish to a specified topic in the
+`publish` method. The return value from `publish` is the message you have
+constructed. The `MultiPublisher` object also has a method, `msg()`, that
+allows you to retrieve the produced message (i.e. the return value from the
+decorating function) without publishing it.
+
+## Important Note
+
+All return values from an function being decorated by `publisher` must return
+the ROS message type specified in the decorator.
