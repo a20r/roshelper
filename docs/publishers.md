@@ -5,7 +5,7 @@ publish to specified topics. The decorator allows you to either publish to a
 single topic specified in the decorator or to publish to multiple topics using
 a *multi-publisher* object.
 
-## Single Topic Publisher
+## Single Topic Publishers
 
 By specifying the topic name as the first argument in the decorator, the return
 value of the decorating function will be automatically published to the
@@ -13,6 +13,10 @@ specified topic whenever said function is called. A simple example is shown
 below.
 
 ```python
+import roshelper
+
+n = roshelper.Node("summer_publisher")
+
 @n.publisher("/sum", Int64)
 def publish_sum(a, b, c):
     num = Int64()
@@ -38,6 +42,10 @@ call the `publish` method to specify the topic at the time of the function
 call.
 
 ```python
+import roshelper
+
+n = roshelper.Node("summer_publisher")
+
 @n.publisher(Int64)
 def publish_sum(a, b, c):
     num = Int64()
