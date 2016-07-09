@@ -26,7 +26,8 @@ class PartialNode(object):
 
         def __decorator(func):
             def __inner(msg):
-                if "self" in func.func_code.co_varnames:
+                n_args = func.func_code.co_argcount
+                if "self" in func.func_code.co_varnames[:n_args]:
                     return self.__class_subscriber(func, msg, topic_name)
                 else:
                     return self.__function_subscriber(func, msg, topic_name)
@@ -115,7 +116,8 @@ class PartialNode(object):
         return self
 
     def __start_class(self, cl, *ar, **kw):
-        vrs = cl.__init__.func_code.co_varnames
+        n_args = cl.__init__.func_code.co_argcount
+        vrs = cl.__init__.func_code.co_varnames[:n_args]
         class_args = list()
         for v in vrs:
             if not v == "self":
