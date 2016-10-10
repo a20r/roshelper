@@ -1,6 +1,7 @@
 import rospy
 from std_msgs.msg import String
 from std_msgs.msg import Int64
+from std_srvs.srv import SetBool, SetBoolRequest, SetBoolResponse
 
 
 str_pub = rospy.Publisher("/test_node_string", String, queue_size=1)
@@ -43,6 +44,12 @@ def publish_str(word):
     st.data = word[::-1]
     str_pub.publish(st)
 
+
+def set_bool(set_bool_request):
+    assert isinstance(set_bool_request, SetBoolRequest)
+    return SetBoolResponse(True, "Boolean set. Inverted value: {}".format(not set_bool_request.data))
+
+bool_setter = rospy.Service("/set_bool", SetBool, set_bool)
 
 if __name__ == "__main__":
     rospy.init_node("test_node", anonymous=False)
