@@ -19,6 +19,7 @@ class PartialNode(object):
         self.cl = None
         self.subscribers = list()
         self.subscribers_init = list()
+        self.services = list()
 
     def subscriber(self, topic_name, msg_type, **kwargs):
         if not "queue_size" in kwargs:
@@ -54,6 +55,26 @@ class PartialNode(object):
             return __decorator
         elif isinstance(upper_args[0], types.TypeType):
             return self.__multi_publisher(upper_args[0], **kwargs)
+
+    def service(self, *upper_args, **kwargs):
+        if isinstance(upper_args[0], str):
+            service_name, srv_type = upper_args
+
+            def __decorator(func):
+                def __inner(request):
+                    n_args = func.func_code.co_argcount
+                    if "self" in func.func_code.co_varnames[:n_args]:
+                        return self.__class_service(func, request, service_name)
+                    else:
+                        return self.__function_service(func, request, service_name)
+
+                args = [service_name, srv_type, __inner]
+                service = rospy.Service(*args, **kwargs)
+                self.services.append(service)
+                return __inner
+            return __decorator
+        else:
+            raise ValueError("First argument to service must be service name as str")
 
     def entry_point(self, *args, **kwargs):
         self.cl_args = args
@@ -96,6 +117,22 @@ class PartialNode(object):
             return func(msg)
         elif func.func_code.co_argcount == 2:
             return func(msg, topic_name)
+
+    def __class_service(self, func, request, service_name):
+        if func.func_code.co_argcount == 2:
+            return func(self.slf, request)
+        else:
+            raise NotImplementedError("Should not happen, but now you can search for this exception in __class_service")
+        # elif func.func_code.co_argcount == 3:
+        #     return func(self.slf, request, service_name)
+
+    def __function_service(self, func, request, service_name):
+        if func.func_code.co_argcount == 1:
+            return func(request)
+        else:
+            raise NotImplementedError("Should not happen, but now you can search for this exception in __function_service")
+        # elif func.func_code.co_argcount == 2:
+        #     return func(request, service_name)
 
     def _start(self, spin):
         for args, kwargs in self.subscribers:

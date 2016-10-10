@@ -3,6 +3,7 @@ import roshelper
 import rospy
 from std_msgs.msg import String
 from std_msgs.msg import Int64
+from std_srvs.srv import SetBool, SetBoolRequest, SetBoolResponse
 
 
 n = roshelper.Node("test_node", anonymous=False)
@@ -40,6 +41,12 @@ def run():
     str_pub("balls")
     int_pub(3).publish("/test_node_int")
     int_pub(10).publish("/another_test_node_int")
+
+
+@n.service("set_bool", SetBool)
+def set_bool(set_bool_request):
+    assert isinstance(set_bool_request, SetBoolRequest)
+    return SetBoolResponse(True, "Boolean set. Inverted value: {}".format(not set_bool_request.data))
 
 
 if __name__ == "__main__":
