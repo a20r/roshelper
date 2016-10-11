@@ -1,10 +1,9 @@
 
 import roshelper
 import rospy
-import functions_node
 from std_msgs.msg import String
 from std_msgs.msg import Int64
-
+from std_srvs.srv import SetBool, SetBoolRequest, SetBoolResponse
 
 n = roshelper.Node("test_node", anonymous=False)
 
@@ -14,6 +13,7 @@ class TestNode(object):
 
     def __init__(self, word):
         self.word = word
+        self.boolean = False
 
     @n.publisher("/test_node_string", String)
     def str_pub(self, word):
@@ -43,6 +43,12 @@ class TestNode(object):
         self.str_pub(self.word)
         self.int_pub(3).publish("/test_node_int")
         self.int_pub(10).publish("/another_test_node_int")
+
+    @n.service("set_bool", SetBool)
+    def set_bool(self, set_bool_request):
+        assert isinstance(set_bool_request, SetBoolRequest)
+        self.boolean = set_bool_request.data
+        return SetBoolResponse(True, "Boolean set. Current value: {}".format(self.boolean))
 
 
 if __name__ == "__main__":
