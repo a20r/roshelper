@@ -27,8 +27,8 @@ class PartialNode(object):
 
         def __decorator(func):
             def __inner(msg):
-                n_args = func.func_code.co_argcount
-                if "self" in func.func_code.co_varnames[:n_args]:
+                n_args = func.__code__.co_argcount
+                if "self" in func.__code__.co_varnames[:n_args]:
                     return self.__class_subscriber(func, msg, topic_name)
                 else:
                     return self.__function_subscriber(func, msg, topic_name)
@@ -53,7 +53,7 @@ class PartialNode(object):
                     return msg
                 return __inner
             return __decorator
-        elif isinstance(upper_args[0], types.TypeType):
+        elif isinstance(upper_args[0], type):
             return self.__multi_publisher(upper_args[0], **kwargs)
 
     def service(self, *upper_args, **kwargs):
@@ -62,8 +62,8 @@ class PartialNode(object):
 
             def __decorator(func):
                 def __inner(request):
-                    n_args = func.func_code.co_argcount
-                    if "self" in func.func_code.co_varnames[:n_args]:
+                    n_args = func.__code__.co_argcount
+                    if "self" in func.__code__.co_varnames[:n_args]:
                         return self.__class_service(func, request, service_name)
                     else:
                         return self.__function_service(func, request, service_name)
@@ -107,19 +107,19 @@ class PartialNode(object):
         return __decorator
 
     def __class_subscriber(self, func, msg, topic_name):
-        if func.func_code.co_argcount == 2:
+        if func.__code__.co_argcount == 2:
             return func(self.slf, msg)
-        elif func.func_code.co_argcount == 3:
+        elif func.__code__.co_argcount == 3:
             return func(self.slf, msg, topic_name)
 
     def __function_subscriber(self, func, msg, topic_name):
-        if func.func_code.co_argcount == 1:
+        if func.__code__.co_argcount == 1:
             return func(msg)
-        elif func.func_code.co_argcount == 2:
+        elif func.__code__.co_argcount == 2:
             return func(msg, topic_name)
 
     def __class_service(self, func, request, service_name):
-        if func.func_code.co_argcount == 2:
+        if func.__code__.co_argcount == 2:
             return func(self.slf, request)
         else:
             raise NotImplementedError("Should not happen, but now you can search for this exception in __class_service")
@@ -127,7 +127,7 @@ class PartialNode(object):
         #     return func(self.slf, request, service_name)
 
     def __function_service(self, func, request, service_name):
-        if func.func_code.co_argcount == 1:
+        if func.__code__.co_argcount == 1:
             return func(request)
         else:
             raise NotImplementedError("Should not happen, but now you can search for this exception in __function_service")
@@ -138,7 +138,9 @@ class PartialNode(object):
         for args, kwargs in self.subscribers:
             self.subscribers_init.append(rospy.Subscriber(*args, **kwargs))
         is_func = isinstance(self.cl, types.FunctionType)
-        is_class = isinstance(self.cl, types.TypeType)
+        is_class = isinstance(self.cl, type)
+        
+        targ = None
         if is_class:
             targ = self.__start_class
         elif is_func:
@@ -153,13 +155,13 @@ class PartialNode(object):
         return self
 
     def __start_class(self, cl, *ar, **kw):
-        n_args = cl.__init__.func_code.co_argcount
-        vrs = cl.__init__.func_code.co_varnames[:n_args]
+        n_args = cl.__init__.__code__.co_argcount
+        vrs = cl.__init__.__code__.co_varnames[:n_args]
         class_args = list()
         for v in vrs:
             if not v == "self":
                 arg_tuple = kw.get(v)
-                is_tuple = isinstance(arg_tuple, types.TupleType)
+                is_tuple = isinstance(arg_tuple, tuple)
                 if arg_tuple is None or len(arg_tuple) == 0:
                     default_var = None
                     scope = "~"
