@@ -2,7 +2,7 @@
 import rospy
 import types
 import threading
-from multipublisher import MultiPublisher
+from .multipublisher import MultiPublisher
 
 
 def start_partial_nodes(node_name, *partials, **kwargs):

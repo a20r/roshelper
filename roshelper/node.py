@@ -2,7 +2,7 @@
 import rospy
 import types
 import threading
-from partialnode import PartialNode
+from .partialnode import PartialNode
 
 
 class Node(PartialNode):
